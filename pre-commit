@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+echo "Start Java file formatting."
+java_changes=$(git diff --cached --name-only --diff-filter=ACMR | grep ".*java$" || true)
+
+if [[ -n "$java_changes" ]]
+then
+    echo "Formatting Java files: $java_changes"
+    java -jar .format/google-java-format-1.7-all-deps.jar --replace --aosp $java_changes
+    echo "Adding formatted files to staging again."
+    git add $java_changes
+else
+    echo "No changed Java files."
+fi
